@@ -163,7 +163,7 @@ namespace Nanook.NKit
             uint hdr = ms.ReadUInt32B((int)(12 * i));
             long name = names + hdr & 0x00ffffffL;
             int type = (int)(hdr >> 24);
-            string nm = ms.ReadStringToNull((int)name);
+            string nm = ms.ReadStringToNull((int)name, Encoding.GetEncoding("shift-jis"));
             uint size = ms.ReadUInt32B((int)(12 * i + 8));
 
             if (type == 1)

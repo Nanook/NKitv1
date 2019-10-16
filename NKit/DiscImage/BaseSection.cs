@@ -33,8 +33,9 @@ namespace Nanook.NKit
         public uint ReadUInt32L(int offset) { return littleEndian(BitConverter.ToUInt32(Data, offset)); }
         public ulong ReadUInt64L(int offset) { return littleEndian(BitConverter.ToUInt64(Data, offset)); }
         public string ReadString(int offset, int length) { return Encoding.ASCII.GetString(Data, offset, length); }
-        public string ReadStringToNull(int offset) { return readStringToNull(offset, -1); }
-        public string ReadStringToNull(int offset, int maxLength) { return readStringToNull(offset, maxLength); }
+        public string ReadStringToNull(int offset, Encoding encoding) { return readStringToNull(encoding, offset, -1); }
+        public string ReadStringToNull(int offset) { return readStringToNull(Encoding.ASCII, offset, -1); }
+        public string ReadStringToNull(int offset, int maxLength) { return readStringToNull(Encoding.ASCII, offset, maxLength); }
         public byte[] Read(int offset, int length)
         {
             byte[] buffer = new byte[length];
@@ -98,17 +99,18 @@ namespace Nanook.NKit
         private ushort bigEndian(ushort x) { return !BitConverter.IsLittleEndian ? x : (ushort)((x >> 8) | (x << 8)); }
         private ushort littleEndian(ushort x) { return BitConverter.IsLittleEndian ? x : (ushort)((x >> 8) | (x << 8)); }
 
-        private string readStringToNull(int offset, int maxLength)
+        private string readStringToNull(Encoding encoding, int offset, int maxLength)
         {
             try
             {
-                StringBuilder sb = new StringBuilder();
                 byte b;
                 int i = offset;
-                while ((maxLength == -1 || sb.Length <= maxLength) && (b = Data[i++]) != '\0')
-                    sb.Append((char)b);
+                int l = 0;
 
-                return sb.ToString();
+                while ((maxLength == -1 || l <= maxLength) && (b = Data[i++]) != '\0')
+                    l++;
+
+                return encoding.GetString(Data, offset, l);
             }
             catch (Exception ex)
             {
