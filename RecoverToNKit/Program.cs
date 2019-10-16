@@ -118,10 +118,7 @@ Edit 'NKit.dll.config' to specify all the required values
                 logLine("");
                 logLine("Failed");
                 logLine("-------");
-                if (hex != null)
-                    logLine(hex.FriendlyErrorMessage);
-                else
-                    logLine(ex.Message);
+                logLine(hex != null ? hex.FriendlyErrorMessage : ex.Message);
                 if (Settings.Read("OutputLevel", "1") == "3")
                     logLine(ex.StackTrace);
             }

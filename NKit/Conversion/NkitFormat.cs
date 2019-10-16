@@ -235,7 +235,7 @@ namespace Nanook.NKit
 
         internal static void LogNkitInfo(NkitInfo imageInfo, ILog log, string id, bool isDisc)
         {
-            string pfx = string.Format("NKit {0} [{1}]", isDisc ? "Disc" : "Prtn", id);
+            string pfx = string.Format("NKit {0} [{1}]", isDisc ? "Disc" : "Prtn", SourceFiles.CleanseFileName(id).PadRight(4));
 
             log?.LogDetail(string.Format("{0}: In [{1,2:#.0} MiB] ({2} bytes), Out [{3,2:#.0} MiB] (bytes {4})", pfx, imageInfo.BytesReadSize / (double)(1024 * 1024), imageInfo.BytesReadSize.ToString(), imageInfo.BytesWriteSize / (double)(1024 * 1024), imageInfo.BytesWriteSize.ToString()));
             if (imageInfo.BytesGcz != 0)

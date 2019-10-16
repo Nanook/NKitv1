@@ -177,6 +177,7 @@ namespace Nanook.NKit
                 {
                     this.Invoke((MethodInvoker)delegate
                     {
+                        setLog(((ProcessFile)item.Tag).Log);
                         _processFileIndex++;
                         OutputResults results = ((ProcessFile)item.Tag).Results;
                         if (results != null)
@@ -185,7 +186,7 @@ namespace Nanook.NKit
                             item.SubItems[2].Text = results.ValidateReadResult.ToString();
                             item.SubItems[3].Text = results.VerifyOutputResult.ToString();
                             item.SubItems[4].Text = results.OutputCrc.ToString("X8") ?? "";
-                            item.SubItems[5].Text = results.OutputId4 ?? "";
+                            item.SubItems[5].Text = SourceFiles.CleanseFileName(results.OutputId4 ?? "");
                             item.SubItems[6].Text = (results.RedumpInfo?.MatchType.ToString() ?? "") + (results.IsRecoverable ? "Recoverable" : "");
                             item.SubItems[7].Text = (results.OutputSize / (double)(1024 * 1024)).ToString("#.0") + " MiB";
                             item.SubItems[8].Text = results.RedumpInfo?.MatchName ?? "";
@@ -294,7 +295,7 @@ namespace Nanook.NKit
 
         private void resetScreen()
         {
-            Settings settings = new Settings(DiscType.GameCube);
+            Settings settings = new Settings(DiscType.Wii); //use wii so that NkitUpdatePartitionRemoval is set
             txtSettingsOutputPathBase.Text = settings.Path;
             txtSettingsSummaryLog.Text = settings.SummaryLog;
             txtSettingsTempPath.Text = settings.TempPath;
@@ -340,6 +341,7 @@ namespace Nanook.NKit
                 lblSettingsOutputPathBase.Enabled = chkSettingsUseMasks.Checked;
                 btnSettingsMasks.Enabled = chkSettingsUseMasks.Checked;
                 chkSettingsReencodeNkit.Enabled = cboSettingsMode.SelectedIndex != 1 && cboSettingsMode.SelectedIndex != 4;
+                chkSettingsRemoveUpdate.Enabled = chkSettingsReencodeNkit.Enabled;
                 chkSettingsRecoveryMatchFailDelete.Enabled = cboSettingsMode.SelectedIndex >= 1 && cboSettingsMode.SelectedIndex <= 3;
                 txtSettingsSummaryLog.Enabled = chkSettingsSummaryLog.Checked;
                 btnSettingsSummaryLog.Enabled = chkSettingsSummaryLog.Checked;
@@ -376,6 +378,7 @@ namespace Nanook.NKit
             {
                 foreach (ListViewItem item in items)
                 {
+                    bool exitLoop = false;
                     Converter nkitConvert = null;
                     ProcessFile pf = (ProcessFile)item.Tag;
                     try
@@ -440,17 +443,27 @@ namespace Nanook.NKit
                     }
                     catch (Exception ex)
                     {
-                        pf.Log += ex.Message;
+                        try
+                        {
+                            HandledException hex = ex as HandledException;
+                            if (hex == null && ex is AggregateException)
+                                hex = (HandledException)((AggregateException)ex).InnerExceptions.FirstOrDefault(a => a is HandledException);
+
+                            pf.Log += string.Format("Failed{0}-------{0}{1}", Environment.NewLine, hex != null ? hex.FriendlyErrorMessage : ex.Message);
+                        }
+                        catch { }
+
                     }
                     finally
                     {
+                        exitLoop = !completedItem(item);
                         if (nkitConvert != null)
                         {
                             nkitConvert.LogMessage -= NkitConvert_LogMessage;
                             nkitConvert.LogProgress -= NkitConvert_LogProgress;
                         }
                     }
-                    if (!completedItem(item))
+                    if (exitLoop)
                         break;
                 }
             });
@@ -492,7 +505,7 @@ namespace Nanook.NKit
                     {
                         TimeSpan ts = DateTime.Now - _startDate;
                         StringBuilder sb = new StringBuilder(50);
-                        sb.AppendFormat(":    1.2.3.4.5.6.7.8.9.10 ~{0,2}m {1,2:D2}s", ((int)ts.TotalMinutes).ToString(), ts.Seconds.ToString());
+                        sb.AppendFormat(".1.2.3.4.5.6.7.8.9.10 ~{0,2}m {1,2:D2}s", ((int)ts.TotalMinutes).ToString(), ts.Seconds.ToString());
                         _startDate = DateTime.MinValue; //reset
 
                         if (e.Size != 0)
@@ -502,7 +515,11 @@ namespace Nanook.NKit
 
                         if (e.CompleteMessage != null)
                             sb.AppendFormat("  {0}", e.CompleteMessage);
-                        ((ProcessFile)_processingItem.Tag).Log = Regex.Replace(((ProcessFile)_processingItem.Tag).Log, @"^(.*[^\.])\.\.\.(\r?\n.*?)$", string.Concat("$1", sb.ToString(), "$2"), RegexOptions.Singleline);
+
+                        ((ProcessFile)_processingItem.Tag).Log = Regex.Replace(((ProcessFile)_processingItem.Tag).Log, @"^(.*[^\.]\r?\n)([a-z ]+)\.\.\.(\r?\n.*?)$",
+                            m => string.Concat(m.Groups[1].Value, m.Groups[2].Value, ":", new string(' ', 15 - m.Groups[2].Value.Length), sb.ToString(), m.Groups[3].Value),
+                            RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
                         setLog(((ProcessFile)_processingItem.Tag).Log);
                     }
                     prgProgressStep.Value = Math.Min(1000, (int)(e.Progress * 1000F));

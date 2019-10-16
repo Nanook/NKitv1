@@ -48,6 +48,8 @@ namespace Nanook.NKit
             _stream.Read(partHdr, partHdrTmp.Length, partHdr.Length - partHdrTmp.Length);
 
             this.Header = new WiiPartitionHeaderSection(_discHdr, readPartitionStream, discOffset, partHdr, partHdr.Length);
+            if (this.Header.IsRvtH)
+                throw new Exception("RVT-H image detected - this image type is not currently supported.");
             byte[] data = new byte[GroupSize];
 
             //this is an awful work around that blocks are scrubbed but the wiistream can't unscrub them because the partition ID is unknown 

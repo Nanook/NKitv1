@@ -22,9 +22,11 @@ namespace Nanook.NKit
         public long PartitionDataSize { get; private set; }
         public PartitionType Type { get { return _hdr.Partitions.FirstOrDefault(a => a.DiscOffset == this.DiscOffset).Type; } }
         private long _dataOffset;
-        public bool IsKorean;
-        public bool IsRvtR;
-        public byte[] ContentSha1;
+        public readonly bool IsKorean;
+        public readonly bool IsRvt;
+        public readonly bool IsRvtR;
+        public readonly bool IsRvtH;
+        public readonly byte[] ContentSha1;
         private long _dolOffset;
         public long FstOffset { get; private set; }
         public long FstSize { get; private set; }
@@ -52,16 +54,22 @@ namespace Nanook.NKit
             PartitionSize = this.ReadUInt32B(0x2bc) * 4L;
             PartitionDataSize = NStream.HashedLenToData(PartitionSize);
 
-            H3Table = this.Read((int)this.ReadUInt32B(0x2b4) * 4, 0x18000);
+            int h3Offset = (int)this.ReadUInt32B(0x2b4) * 4;
             int tmdOffset = (int)(this.ReadUInt32B(0x2a8) * 4);
-            ContentSha1 = this.Read(tmdOffset + 0x1e4 + 0x10, 20);
+            if (h3Offset != 0)
+                H3Table = this.Read(h3Offset, 0x18000);
+            if (tmdOffset != 0)
+                ContentSha1 = this.Read(tmdOffset + 0x1e4 + 0x10, 20);
 
             // Determine the common key to use.
             string issuer = Encoding.ASCII.GetString(this.Read(0x140, 64)).TrimEnd('\0');
-            IsRvtR = issuer == "Root-CA00000002-XS00000006"; //Use the RVT-R key.
-            IsKorean = !IsRvtR && this.Read8(0x1f1) == 1; //Use the Korean Key
+            IsRvt = issuer == "Root-CA00000002-XS00000006"; //Use the RVT-R key.
+            IsKorean = !IsRvt && this.Read8(0x1f1) == 1; //Use the Korean Key
+            IsRvtR = !(IsRvtH = IsRvt && PartitionSize == 0);
+            if (IsRvtH)
+                return; //notsupported
 
-            int i = IsRvtR ? 0 : IsKorean ? 1 : 2;
+            int i = IsRvt ? 0 : IsKorean ? 1 : 2;
             byte[] lame = Convert.FromBase64String(_lame);
             byte[] l = new byte[lame.Length / 3];
             for (int j = 0; j < l.Length; i += 3)

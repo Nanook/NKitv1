@@ -131,13 +131,13 @@ namespace Nanook.NKit
                     if (pc.ReaderCrcs != null)
                     {
                         foreach (CrcItem c in pc.ReaderCrcs.Crcs)
-                            _log.LogDebug(string.Format("R-CRC {0}  Before:{1}  After:{2}  L:{3} {4}", c.Offset.ToString(l9 ? "X9" : "X8"), c.Value.ToString("X8"), c.PatchCrc == 0 ? "        " : c.PatchCrc.ToString("X8"), c.Length.ToString(l9 ? "X9" : "X8"), c.Name));
+                            _log.LogDebug(string.Format("R-CRC {0}  Before:{1}  After:{2}  L:{3} {4}", c.Offset.ToString(l9 ? "X9" : "X8"), c.Value.ToString("X8"), c.PatchCrc == 0 ? "        " : c.PatchCrc.ToString("X8"), c.Length.ToString(l9 ? "X9" : "X8"), SourceFiles.CleanseFileName(c.Name)));
                         _log.LogDebug(string.Format("ReadCRC {0}Before:{1} After:{2}", l9 ? " " : "", pc.ReaderCrcs.FullCrc(false).ToString("X8"), pc.ReaderCrcs.FullCrc(true).ToString("X8")));
                     }
                     if (pc.WriterCrcs != null)
                     {
                         foreach (CrcItem c in pc.WriterCrcs.Crcs)
-                            _log.LogDebug(string.Format("W-CRC {0}  Before:{1}  After:{2}  L:{3} {4}", c.Offset.ToString(l9 ? "X9" : "X8"), c.Value.ToString("X8"), c.PatchCrc == 0 ? "        " : c.PatchCrc.ToString("X8"), c.Length.ToString(l9 ? "X9" : "X8"), c.Name));
+                            _log.LogDebug(string.Format("W-CRC {0}  Before:{1}  After:{2}  L:{3} {4}", c.Offset.ToString(l9 ? "X9" : "X8"), c.Value.ToString("X8"), c.PatchCrc == 0 ? "        " : c.PatchCrc.ToString("X8"), c.Length.ToString(l9 ? "X9" : "X8"), SourceFiles.CleanseFileName(c.Name)));
                         _log.LogDebug(string.Format("WriteCRC {0}Before:{1} After:{2}", l9 ? " " : "", pc.WriterCrcs.FullCrc(false).ToString("X8"), pc.WriterCrcs.FullCrc(true).ToString("X8")));
                     }
                     _log.ProcessingComplete(results.OutputSize, results.ProcessorMessage, true);

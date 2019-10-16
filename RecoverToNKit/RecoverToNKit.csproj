@@ -8,7 +8,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Nanook.NKit.RecoverToNkit</RootNamespace>
     <AssemblyName>RecoverToNKit</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -54,6 +54,9 @@
       <Project>{7b7c6c51-4581-4f59-ae5c-f40b779680ae}</Project>
       <Name>NKit</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

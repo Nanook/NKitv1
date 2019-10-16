@@ -78,6 +78,16 @@ namespace Nanook.NKit
             return path;
         }
 
+        public static string CleanseFileName(string name)
+        {
+            if (name == null)
+                return null;
+            string invalidChars = Regex.Escape(new string(Path.GetInvalidFileNameChars()));
+            string invalidRegStr = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
+
+            return Regex.Replace(name, invalidRegStr, " ");
+        }
+
         public static string ExtensionString(bool isIsoDec, bool isWbfs, bool isNkit, bool isGcz)
         {
             string f;

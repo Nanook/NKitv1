@@ -20,6 +20,7 @@ namespace Nanook.NKit
         public static string ExeName { get; private set; }
 
         public static bool ConfigFileFound { get; private set; }
+        public static string HomePath { get; private set; }
         public string Path { get; set; }
         public string TempPath { get; set; }
         public bool EnableSummaryLog { get; set; }
@@ -97,6 +98,13 @@ namespace Nanook.NKit
         {
             try
             {
+                try
+                {
+                    HomePath = (Environment.OSVersion.Platform == PlatformID.Unix || Environment.OSVersion.Platform == PlatformID.MacOSX)
+                            ? Environment.GetEnvironmentVariable("HOME") : Environment.ExpandEnvironmentVariables("%HOMEDRIVE%%HOMEPATH%");
+                }
+                catch { }
+
                 string exe = Assembly.GetEntryAssembly().Location;
                 _exePath = System.IO.Path.GetDirectoryName(exe);
                 ExeName = System.IO.Path.GetFileNameWithoutExtension(exe); //get correct filename casing
@@ -359,7 +367,11 @@ namespace Nanook.NKit
             {
                 string m = (s?.Settings[name]?.Value) ?? defValue;
                 if (pathReplace)
+                {
+                    if (m.StartsWith("~") && !string.IsNullOrEmpty(HomePath))
+                        m = HomePath + (m.Length == 1 ? "" : m.Substring(1));
                     m = pathFix(m).Replace("%pth", this.Path)?.Replace("%exe", _exePath);
+                }
                 return m;
             }
             catch { }

@@ -646,14 +646,14 @@ namespace Nanook.NKit
 
                     if (!toExtract.Any(a => a.DiscOffset == ps.DiscOffset))
                     {
-                        Log?.Log(string.Format("    Skipping {0} Partition: {1}...", ps.Header.Type.ToString(), ps.Header.Id.ToString()));
+                        Log?.Log(string.Format("    Skipping {0} Partition: [{1}]...", ps.Header.Type.ToString(), SourceFiles.CleanseFileName(ps.Header.Id).PadRight(4)));
                         continue;
                     }
                     extracting = true;
 
                     pHdr = ps.Header;
                     extracting = true;
-                    Log?.Log(string.Format("    {0} of {1} - Extracting {2} Recovery Partition: {3}", (extracted + 1).ToString(), toExtract.Count().ToString(), ps.Header.Type.ToString(), ps.Header.Id.ToString()));
+                    Log?.Log(string.Format("    {0} of {1} - Extracting {2} Recovery Partition: [{3}]", (extracted + 1).ToString(), toExtract.Count().ToString(), ps.Header.Type.ToString(), SourceFiles.CleanseFileName(ps.Header.Id).PadRight(4)));
 
                     crcStream = new CryptoStream(ByteStream.Zeros, crc, CryptoStreamMode.Write);
                     crc.Initialize();
@@ -700,7 +700,7 @@ namespace Nanook.NKit
             if (ps.Header.Type == PartitionType.Update)
                 fileName = string.Format("{0}_{1}_", BitConverter.ToString(ps.Header.ContentSha1).Replace("-", ""), ps.Header.IsKorean ? "K" : "N");
             else
-                fileName = string.Format("{0}_{1}_{2}_{3}_", this.NStream.Id8, channelNo.ToString().PadLeft(2, '0'), ps.Header.Id, ps.Header.IsKorean ? "K" : "N");
+                fileName = string.Format("{0}_{1}_{2}_{3}_", this.NStream.Id8, channelNo.ToString().PadLeft(2, '0'), SourceFiles.CleanseFileName(ps.Header.Id).PadRight(4), ps.Header.IsKorean ? "K" : "N");
             tempFileName = Path.Combine(Settings.OtherRecoveryFilesPath, fileName + "TEMP");
 
             Directory.CreateDirectory(Settings.OtherRecoveryFilesPath);

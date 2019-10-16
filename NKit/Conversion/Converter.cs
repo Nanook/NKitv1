@@ -61,7 +61,7 @@ namespace Nanook.NKit
                             p[0].Reader.RequireVerifyCrc = true; //verify the nkit read
                             p[1].Reader.RequireValidationCrc = true; //IsoReader to set the CRC to be verified
                         }
-                        else if (nkitFormat == NkitFormatType.Iso) //don't reencode nkit, useful when wanting to just compress and/or verify
+                        else if (nkitFormat == NkitFormatType.Iso || nkitFormat == NkitFormatType.Gcz) //don't reencode nkit, useful when wanting to just compress and/or verify
                         {
                             p.Add(new Processor(new IsoReader(), new IsoWriter(), "Copy NKit", this, true, false, ProcessorSizeMode.Stream));
                             p[0].Reader.RequireValidationCrc = true; //IsoReader to set the CRC to be verified (Will use src nkit crc from header)
@@ -86,7 +86,7 @@ namespace Nanook.NKit
                             p[0].Reader.RequireVerifyCrc = true; //verify the nkit read
                             p[1].Reader.RequireValidationCrc = true; //IsoReader to set the CRC to be verified
                         }
-                        else if (nkitFormat == NkitFormatType.Iso) //don't reencode nkit, useful when wanting to just compress and/or verify
+                        else if (nkitFormat == NkitFormatType.Iso || nkitFormat == NkitFormatType.Gcz) //don't reencode nkit, useful when wanting to just compress and/or verify
                         {
                             p.Add(new Processor(new IsoReader(), new IsoWriter(), "Copy NKit", this, true, false, ProcessorSizeMode.Stream));
                             p[0].Reader.RequireValidationCrc = true; //IsoReader to set the CRC to be verified (Will use src nkit crc from header)
@@ -273,7 +273,7 @@ namespace Nanook.NKit
                     if (!toNkit)
                         processors.Add(new Processor(new IsoReader(), new VerifyWriter(), "Full Verify", this, false, true, ProcessorSizeMode.Stream));
                     else
-                        processors.Add(new Processor(nstream.IsGameCube ? new NkitReaderGc() : (IReader)new NkitReaderWii(), new VerifyWriter(), "NKit Verify", this, false, true, ProcessorSizeMode.Image));
+                        processors.Add(new Processor(nstream.IsGameCube ? new NkitReaderGc() : (IReader)new NkitReaderWii(), new VerifyWriter(), "NKit Verify", this, true, true, ProcessorSizeMode.Image));
                     processors.Last().Writer.RequireVerifyCrc = true;
                     processors.Last().Writer.VerifyIsWrite = true; //read verify
                 }

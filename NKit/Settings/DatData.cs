@@ -117,10 +117,10 @@ namespace Nanook.NKit
         {
             try
             {
-                string fileName = makeValidFileName(SourceFiles.RemoveExtension(results.InputFileName, true));
-                string titleName = makeValidFileName(results.OutputTitle) ?? fileName;
-                string tgdbName = makeValidFileName(GameTdbData.FirstOrDefault(a => a.Item1 == results.OutputId6)?.Item2) ?? titleName;
-                string matchName = results.RedumpInfo?.MatchName != null ? makeValidFileName(results.RedumpInfo.MatchName) : (tgdbName ?? fileName);
+                string fileName = SourceFiles.CleanseFileName(SourceFiles.RemoveExtension(results.InputFileName, true));
+                string titleName = SourceFiles.CleanseFileName(results.OutputTitle) ?? fileName;
+                string tgdbName = SourceFiles.CleanseFileName(GameTdbData.FirstOrDefault(a => a.Item1 == results.OutputId6)?.Item2) ?? titleName;
+                string matchName = results.RedumpInfo?.MatchName != null ? SourceFiles.CleanseFileName(results.RedumpInfo.MatchName) : (tgdbName ?? fileName);
 
                 Dictionary<string, string> values = new Dictionary<string, string>();
                 values.Add("%src", results.InputFileName ?? Path.GetDirectoryName(Assembly.GetEntryAssembly().Location));
@@ -134,9 +134,9 @@ namespace Nanook.NKit
                 values.Add("%crc", results.OutputCrc.ToString("X8"));
                 values.Add("%md5", results.OutputMd5 == null ? "" : BitConverter.ToString(results.OutputMd5).Replace("-", ""));
                 values.Add("%sha", results.OutputSha1 == null ? "" : BitConverter.ToString(results.OutputSha1).Replace("-", ""));
-                values.Add("%id4", makeValidFileName(results.OutputId4));
-                values.Add("%id6", makeValidFileName(results.OutputId6));
-                values.Add("%id8", makeValidFileName(results.OutputId8));
+                values.Add("%id4", SourceFiles.CleanseFileName(results.OutputId4).PadRight(4));
+                values.Add("%id6", SourceFiles.CleanseFileName(results.OutputId6).PadRight(6));
+                values.Add("%id8", SourceFiles.CleanseFileName(results.OutputId8).PadRight(8));
 
                 string[] braces = new[] { "%crc", "%md5", "%sha", "%id4", "%id6", "%id8" };
 
@@ -157,16 +157,6 @@ namespace Nanook.NKit
             {
                 throw new HandledException(ex, "DatData.GetFilename - Replace masks");
             }
-        }
-
-        private string makeValidFileName(string name)
-        {
-            if (name == null)
-                return null;
-            string invalidChars = Regex.Escape(new string(Path.GetInvalidFileNameChars()));
-            string invalidRegStr = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
-
-            return Regex.Replace(name, invalidRegStr, "-");
         }
 
         public void AddRedumpEntry(string datFullFilename, string filename, long size, uint crc, byte[] sha1, byte[] md5)

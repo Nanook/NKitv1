@@ -5,6 +5,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NKit", "NKit\NKit.csproj", "{7B7C6C51-4581-4F59-AE5C-F40B779680AE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7D3B0F7B-E328-4973-80AC-62D0D3249406}"
+	ProjectSection(SolutionItems) = preProject
+		Issues.txt = Issues.txt
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecoveryExtract", "RecoveryExtract\RecoveryExtract.csproj", "{F095A505-37BF-4F6E-93A0-F5F113A80BCD}"
 EndProject

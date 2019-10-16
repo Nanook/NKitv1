@@ -89,7 +89,7 @@ namespace Nanook.NKit
                             updateCrcStream = new CryptoStream(ByteStream.Zeros, updateCrc, CryptoStreamMode.Write);
                             crc.Initialize();
                             nkitPartInfo.BytesData += disc.WriteRecoveryPartitionData(updateCrcStream, false, ps, 0, out updateTmpFileName, out updateFileName, out updateTarget);
-                            _log?.LogDetail(string.Format("Extracted and Removed {0} Recovery Partition: {1}", ps.Header.Type.ToString(), ps.Header.Id.ToString()));
+                            _log?.LogDetail(string.Format("Extracted and Removed {0} Recovery Partition: [{1}]", ps.Header.Type.ToString(), SourceFiles.CleanseFileName(ps.Header.Id).PadRight(4)));
                             removedUpdateFiller = new MemorySection(new byte[0x8000]);
                             removedUpdateFiller.Write(0, hdr.Read(0x40000, 0x100)); //backup the original partition table in case it's non standard in some way
                         }
@@ -151,7 +151,7 @@ namespace Nanook.NKit
                             nkitDiscInfo.BytesGaps += fs.Size;
                             dstPos += removedUpdateFiller.Size;
 
-                            crc.Snapshot(string.Format("{0}{1}Replacement Filler", lastPartitionId ?? "", string.IsNullOrEmpty(lastPartitionId) ? "" : " "));
+                            crc.Snapshot(string.Format("{0}Replacement Filler", string.IsNullOrEmpty(lastPartitionId) ? "" : (" " + SourceFiles.CleanseFileName(lastPartitionId).PadRight(4))));
                             if (extractingUpdate)
                             {
                                 int storeType;

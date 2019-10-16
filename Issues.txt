@@ -1,0 +1,29 @@
+Outstanding Issues
++ ProcessorApp to show before and after size - put before size in on scan?
++ Enable extracting recovery info from the nkit format
+
+v1.3 Changes
+- Added RVT-H Detection. This is not currently supported - An error is thrown and logged
+- Fixed NkitReencode. It was always reencoding and not copying the NKit file when converting nkit.iso <-> nkit.gcz
+- Fixed Verify not outputting any log detail messages e.g. When a removed Update Partition is required to verify and was not present - no message was output, it just failed
+- Moved the SummaryLog to the Processed folder rather than the app folder to make it more obvious
+- Added settings home support. ~ at the start of a Path will insert the user's home directory (all OSs)
+- Revert To .Net 4.6.1 - mono wasn't handling 4.7.2 very well. The app well be ported to dotnet core 3 soon
+- ProcessorApp: Added failure message to log errors (same as cmldline exe output)
+- ProcessorApp: Disabled the checkbox for 'Remove and Preserve Wii Update Partitions' when Recovering or Converting to iso
+- ProcessorApp: Fixed checkbox for 'Remove and Preserve Wii Update Partitions' not being set on app load
+- ProcessorApp: Fixed progress .1.2.3... text alignment in the log output
+- ProcessorApp: Fixed the output log being truncated when a partition ID contained a null char
+
+
+v1.2 Changes
+- Updated to .Net 4.7.2 (Preparation for long filename support)
+- Modified some public class accessibility to make them internal
+- Added support for images that a file ends on a non 4 byte alignment
+- Added support for images that have no Magic (default to GC)
+- Fixed the ExtractionApp GC Region always showing Japan
+- Corrected NKitExtracted path in config
+- Added missing Wii Jakers config entry
+- Fixed Double "Truncated RVT-R" message
+- Fixed ProcessorApp Gui Exception not being captured
+- Fixed Drag Drop message being cleared when a non supported file is dropped
