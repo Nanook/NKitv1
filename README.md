@@ -1,6 +1,6 @@
 # NKit
 
-Welcome to the NKit v1.2 code, provided as is.
+Welcome to the NKit v1.4 code, provided as is.
 
 It's a bit rough around the edges and could do with cleansing. This was planned to happen, but due to the code passing all the tests – the last taking 10 days – cleansing the code was deemed too much of a risk. Unit tests posed to be a challenge.
 
