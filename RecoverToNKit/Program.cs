@@ -17,7 +17,7 @@ namespace Nanook.NKit.RecoverToNkit
 
         static int Main(string[] args)
         {
-           logEnabled = true;
+            logEnabled = true;
             try
             {
                 logEnabled = args.Length == 0 || Settings.Read("OutputLevel", "1") != "0";
