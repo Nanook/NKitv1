@@ -96,7 +96,7 @@ namespace Nanook.NKit
 
         public static string GetUpdatePartition(Settings settings, uint crc)
         {
-            Regex m = new Regex(@"\\([A-Z0-9]{40})_([A-Z]+)_" + crc.ToString("X8") + "$", RegexOptions.IgnoreCase);
+            Regex m = new Regex(@"[/|\\]([A-Z0-9]{40})_([A-Z]+)_" + crc.ToString("X8") + "$", RegexOptions.IgnoreCase);
             string fn = null;
             if (Directory.Exists(settings.RecoveryFilesPath) && (fn = Directory.GetFiles(settings.RecoveryFilesPath).FirstOrDefault(a => m.IsMatch(a))) != null)
                 return fn;
